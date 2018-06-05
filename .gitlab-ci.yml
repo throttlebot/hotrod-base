@@ -1,5 +1,5 @@
 stages:
-    - redis
+    - setup
 
 image: docker:latest
 
@@ -29,13 +29,16 @@ before_script:
     - kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 
 redis:
-    stage: build
-    when: manual
+    stage: setup
     script:
     - helm install
       --set cluster.slaveCount=2
       --set password=$REDIS_PASS
       stable/redis
+
+postgres:
+    stage: setup
+    script:
     - helm install
       --set postgresUser=$POSTGRES_USER
       --set password=$POSTGRES_PASS
