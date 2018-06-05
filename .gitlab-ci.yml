@@ -1,0 +1,42 @@
+stages:
+    - redis
+
+image: docker:latest
+
+# Can use UI to hide passwords
+variables:
+    DOCKER_DRIVER: overlay2
+    KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
+    HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
+    REDIS_PASS: keldakelda
+    POSTGRES_USER: hotrod
+    POSTGRES_PASS: keldakelda
+
+
+services:
+    - docker:dind
+
+before_script:
+    - apk update && apk add curl
+    - curl -LO $KUBECTL_URL
+    - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+    - mkdir -p $HOME/.kube
+    - cat $KUBECONFIG > $HOME/.kube/config
+    - curl $HELM_URL | bash
+    - helm init
+    - kubectl create serviceaccount --namespace kube-system tiller
+    - kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+    - kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+
+redis:
+    stage: build
+    when: manual
+    script:
+    - helm install
+      --set cluster.slaveCount=2
+      --set password=$REDIS_PASS
+      stable/redis
+    - helm install
+      --set postgresUser=$POSTGRES_USER
+      --set password=$POSTGRES_PASS
+      stable/postgresql
