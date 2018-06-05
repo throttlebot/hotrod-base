@@ -11,10 +11,7 @@ variables:
     REDIS_PASS: keldakelda
     POSTGRES_USER: hotrod
     POSTGRES_PASS: keldakelda
-
-
-services:
-    - docker:dind
+    NAMESPACE: hotrod-staging
 
 before_script:
     - apk update && apk add curl bash openssl
@@ -31,6 +28,7 @@ redis:
     - helm install
       --set cluster.slaveCount=2
       --set password=$REDIS_PASS
+      --namespace $NAMESPACE
       stable/redis
 
 postgres:
@@ -39,4 +37,5 @@ postgres:
     - helm install
       --set postgresUser=$POSTGRES_USER
       --set password=$POSTGRES_PASS
+      --namespace $NAMESPACE
       stable/postgresql
