@@ -23,6 +23,8 @@ before_script:
 
 redis:
     stage: setup
+    environment:
+        name: StageEnv
     script:
     - helm install
       --set cluster.slaveCount=2
@@ -32,6 +34,8 @@ redis:
 
 postgres:
     stage: setup
+    environment:
+        name: StageEnv
     script:
     - helm install
       --set postgresUser=$POSTGRES_USER
