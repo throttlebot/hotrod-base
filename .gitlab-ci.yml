@@ -8,6 +8,7 @@ variables:
     DOCKER_DRIVER: overlay2
     KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
     HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
+    KUBR_NAMESPACE: hotrod
     REDIS_PASS: keldakelda
     POSTGRES_USER: hotrod
     POSTGRES_PASS: keldakelda
