@@ -17,7 +17,7 @@ services:
     - docker:dind
 
 before_script:
-    - apk update && apk add curl
+    - apk update && apk add curl bash
     - curl -LO $KUBECTL_URL
     - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
     - mkdir -p $HOME/.kube
