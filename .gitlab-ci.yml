@@ -17,14 +17,12 @@ services:
     - docker:dind
 
 before_script:
-    - apk update && apk add curl bash
+    - apk update && apk add curl bash openssl
     - curl -LO $KUBECTL_URL
     - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
     - mkdir -p $HOME/.kube
     - cat $KUBECONFIG > $HOME/.kube/config
-    - curl $HELM_URL > get_helm.sh
-    - chmod 700 get_helm.sh
-    - ./get_helm.sh
+    - curl $HELM_URL | bash
     - helm init
     - kubectl create serviceaccount --namespace kube-system tiller
     - kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
