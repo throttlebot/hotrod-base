@@ -15,9 +15,6 @@ variables:
     KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
     HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
     KUBE_NAMESPACE: hotrod
-    REDIS_PASS: keldakelda
-    POSTGRES_USER: hotrod
-    POSTGRES_PASS: keldakelda
 
 before_script:
     - apk update && apk add curl bash openssl
@@ -67,7 +64,7 @@ build:
 seed:
     stage: seed
     script:
-    - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g deploy/seed.yaml
-    - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g deploy/seed.yaml
-    - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g deploy/seed.yaml
+    - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
+    - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
+    - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
     - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
