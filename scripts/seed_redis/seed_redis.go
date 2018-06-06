@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	redisHost := os.Getenv("HOTROD_REDIS_REDIS_MASTER_SERVICE_HOST")
-	redisPort := os.Getenv("HOTROD_REDIS_REDIS_MASTER_SERVICE_PORT")
+	redisHost := os.Getenv("HOTROD_REDIS_MASTER_SERVICE_HOST")
+	redisPort := os.Getenv("HOTROD_REDIS_MASTER_SERVICE_PORT")
 	redisPass := os.Getenv("REDIS_PASS")
 
 	client := redis.NewClient(&redis.Options{
