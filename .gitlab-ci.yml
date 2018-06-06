@@ -33,13 +33,13 @@ redis:
     environment:
         name: StageEnv
     script:
-    - helm install
+    - helm upgrade --install
       --name hotrod
       --set cluster.slaveCount=2
       --set password=$REDIS_PASS
       --namespace $KUBE_NAMESPACE
       --wait
-      --replace
+      --recreate-pods
       stable/redis
 
 postgres:
@@ -47,13 +47,13 @@ postgres:
     environment:
         name: StageEnv
     script:
-    - helm install
+    - helm upgrade --install
       --name hotrod
       --set postgresUser=$POSTGRES_USER
       --set password=$POSTGRES_PASS
       --namespace $KUBE_NAMESPACE
       --wait
-      --replace
+      --recreate-pods
       stable/postgresql
 
 build:
@@ -62,9 +62,9 @@ build:
     - echo "skip install kubectl and helm"
     script:
     - docker login -u $DOCKER_USER -p $DOCKER_PASS
-    - docker pull $CI_REGISTRY_USER/hotrod-seed
-    - docker build -t $CI_REGISTRY_USER/hotrod-seed --cache-from $CI_REGISTRY_USER/hotrod-seed scripts/
-    - docker push $CI_REGISTRY_USER/hotrod-seed
+    - docker pull $DOCKER_USER/hotrod-seed
+    - docker build -t $DOCKER_USER/hotrod-seed --cache-from $DOCKER_USER/hotrod-seed scripts/
+    - docker push $DOCKER_USER/hotrod-seed
 
 seed:
     stage: seed
