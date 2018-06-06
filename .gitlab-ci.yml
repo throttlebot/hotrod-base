@@ -67,7 +67,7 @@ build:
 seed:
     stage: seed
     script:
-    - kubectl apply -f deploy/seed.yaml --namespace $KUBE_NAMESPACE
+    - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
     - kubectl set env job/seed
       POSTGRES_USER=$POSTGRES_USER
       POSTGRES_PASS=$POSTGRES_PASS
