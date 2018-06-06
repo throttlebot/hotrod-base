@@ -28,6 +28,7 @@ redis:
         name: StageEnv
     script:
     - helm install
+      --name hotrod
       --set cluster.slaveCount=2
       --set password=$REDIS_PASS
       --namespace $KUBE_NAMESPACE
@@ -39,6 +40,7 @@ postgres:
         name: StageEnv
     script:
     - helm install
+      --name hotrod
       --set postgresUser=$POSTGRES_USER
       --set password=$POSTGRES_PASS
       --namespace $KUBE_NAMESPACE
