@@ -4,6 +4,9 @@ stages:
 
 image: docker:latest
 
+services:
+    - docker:dind
+
 # Can use UI to hide passwords
 variables:
     DOCKER_DRIVER: overlay2
