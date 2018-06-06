@@ -39,7 +39,7 @@ redis:
       --namespace $KUBE_NAMESPACE
       --wait
       --recreate-pods
-      hotrod stable/redis
+      hotrod-redis stable/redis
 
 postgres:
     stage: setup
@@ -52,7 +52,7 @@ postgres:
       --namespace $KUBE_NAMESPACE
       --wait
       --recreate-pods
-      hotrod stable/postgresql
+      hotrod-postgres stable/postgresql
 
 build:
     stage: setup
