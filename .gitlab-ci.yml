@@ -45,7 +45,7 @@ postgres:
     script:
     - helm upgrade --install
       --set postgresUser=$POSTGRES_USER
-      --set password=$POSTGRES_PASS
+      --set postgresPassword=$POSTGRES_PASS
       --namespace $KUBE_NAMESPACE
       --wait
       --recreate-pods
