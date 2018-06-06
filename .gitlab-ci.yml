@@ -67,4 +67,5 @@ seed:
     - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
     - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
     - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
+    - kubectl delete job/seed --namespace $KUBE_NAMESPACE
     - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
