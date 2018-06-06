@@ -34,13 +34,12 @@ redis:
         name: StageEnv
     script:
     - helm upgrade --install
-      --name hotrod
       --set cluster.slaveCount=2
       --set password=$REDIS_PASS
       --namespace $KUBE_NAMESPACE
       --wait
       --recreate-pods
-      stable/redis
+      hotrod stable/redis
 
 postgres:
     stage: setup
@@ -48,13 +47,12 @@ postgres:
         name: StageEnv
     script:
     - helm upgrade --install
-      --name hotrod
       --set postgresUser=$POSTGRES_USER
       --set password=$POSTGRES_PASS
       --namespace $KUBE_NAMESPACE
       --wait
       --recreate-pods
-      stable/postgresql
+      hotrod stable/postgresql
 
 build:
     stage: setup
