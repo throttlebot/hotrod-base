@@ -1,11 +1,14 @@
 stages:
     - setup
+    - seed
 
 image: docker:latest
 
 # Can use UI to hide passwords
 variables:
     DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_USER: willwangkelda
     KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
     HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
     KUBE_NAMESPACE: hotrod
@@ -32,6 +35,8 @@ redis:
       --set cluster.slaveCount=2
       --set password=$REDIS_PASS
       --namespace $KUBE_NAMESPACE
+      --wait
+      --replace
       stable/redis
 
 postgres:
@@ -44,4 +49,25 @@ postgres:
       --set postgresUser=$POSTGRES_USER
       --set password=$POSTGRES_PASS
       --namespace $KUBE_NAMESPACE
+      --wait
+      --replace
       stable/postgresql
+
+build:
+    stage: setup
+    before_script:
+    - echo "skip install kubectl and helm"
+    script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASS
+    - docker pull $CI_REGISTRY_USER/hotrod-seed
+    - docker build -t $CI_REGISTRY_USER/hotrod-seed --cache-from $CI_REGISTRY_USER/hotrod-seed scripts/
+    - docker push $CI_REGISTRY_USER/hotrod-seed
+
+seed:
+    stage: seed
+    script:
+    - kubectl apply -f deploy/seed.yaml --namespace $KUBE_NAMESPACE
+    - kubectl set env job/seed
+      POSTGRES_USER=$POSTGRES_USER
+      POSTGRES_PASS=$POSTGRES_PASS
+      REDIS_MASTER_PASSWORD=$REDIS_PASS
