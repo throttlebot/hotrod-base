@@ -67,9 +67,7 @@ build:
 seed:
     stage: seed
     script:
+    - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g deploy/seed.yaml
+    - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g deploy/seed.yaml
+    - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g deploy/seed.yaml
     - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
-    - kubectl set env job/seed
-      POSTGRES_USER=$POSTGRES_USER
-      POSTGRES_PASS=$POSTGRES_PASS
-      REDIS_MASTER_PASSWORD=$REDIS_PASS
-      --namespace $KUBE_NAMESPACE

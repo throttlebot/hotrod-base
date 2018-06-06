@@ -12,5 +12,11 @@ spec:
         env:
         - name: GET_HOSTS_FROM
           value: dns
+        - name: POSTGRES_USER
+          value: POSTGRES_USER_VALUE
+        - name: POSTGRES_PASS
+          value: POSTGRES_PASS_VALUE
+        - name: REDIS_PASS
+          value: REDIS_PASS_VALUE
       restartPolicy: Never
   backoffLimit: 4
