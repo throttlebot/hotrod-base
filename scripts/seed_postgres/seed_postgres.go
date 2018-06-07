@@ -34,9 +34,11 @@ var customers = []customer.Customer{
 func main() {
 	user := os.Getenv("POSTGRES_USER")
 	password := os.Getenv("POSTGRES_PASS")
-	host := "hotrod-postgres-postgresql"
-	port := os.Getenv("HOTROD_POSTGRES_POSTGRESQL_SERVICE_PORT")
-	connectStr := fmt.Sprintf("postgres://%s:%s@%s:%s?sslmode=disable", user, password, host, port)
+	url := "hotrod-postgres-postgresql-master" + ":" + os.Getenv("HOTROD_POSTGRES_POSTGRESQL_SERVICE_PORT")
+	if os.Getenv("POSTGRES_URL") != "POSTGRES_URL_VALUE" {
+		url = os.Getenv("POSTGRES_URL")
+	}
+	connectStr := fmt.Sprintf("postgres://%s:%s@%s?sslmode=disable", user, password, url)
 
 	db, err := sql.Open("postgres", connectStr)
 	if err != nil {
@@ -47,7 +49,7 @@ func main() {
 	db.Exec("CREATE DATABASE customers")
 	// Ignore errors (like if cannot connect, database already exists, etc) until next panic
 
-	connectStr = fmt.Sprintf("postgres://%s:%s@%s:%s/customers?sslmode=disable", user, password, host, port)
+	connectStr = fmt.Sprintf("postgres://%s:%s@%s/customers?sslmode=disable", user, password, url)
 	db, err = sql.Open("postgres", connectStr)
 	if err != nil {
 		panic(err)

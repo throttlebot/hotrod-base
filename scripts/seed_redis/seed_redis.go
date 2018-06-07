@@ -13,10 +13,14 @@ import (
 func main() {
 	redisHost := "hotrod-redis-master"
 	redisPort := os.Getenv("HOTROD_REDIS_MASTER_SERVICE_PORT")
+	url := redisHost + ":" + redisPort
+	if os.Getenv("REDIS_URL") != "REDIS_URL_VALUE" {
+		url = os.Getenv("REDIS_URL")
+	}
 	redisPass := os.Getenv("REDIS_PASS")
 
 	client := redis.NewClient(&redis.Options{
-		Addr: redisHost + ":" + redisPort,
+		Addr: url,
 		Password: redisPass,
 	})
 

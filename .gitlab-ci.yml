@@ -15,6 +15,8 @@ variables:
   KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
   HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
   KUBE_NAMESPACE: hotrod
+  EXTERNAL_POSTGRES_URL: 35.194.75.119:5432
+  EXTERNAL_REDIS_URL: 10.0.0.11:6379
 
 before_script:
   - apk update && apk add curl bash openssl
@@ -81,5 +83,7 @@ prod:
   - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
   - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
   - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
+  - sed -i -e s/POSTGRES_URL_VALUE/$EXTERNAL_POSTGRES_URL/g seed.yaml
+  - sed -i -e s/REDIS_URL_VALUE/$EXTERNAL_REDIS_URL/g seed.yaml
   - kubectl delete job/seed --namespace $KUBE_NAMESPACE
   - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE

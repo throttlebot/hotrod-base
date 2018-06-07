@@ -18,5 +18,9 @@ spec:
           value: POSTGRES_PASS_VALUE
         - name: REDIS_PASS
           value: REDIS_PASS_VALUE
+        - name: POSTGRES_URL
+          value: POSTGRES_URL_VALUE
+        - name: REDIS_URL
+          value: REDIS_URL_VALUE
       restartPolicy: Never
   backoffLimit: 4
