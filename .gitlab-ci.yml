@@ -1,71 +1,85 @@
 stages:
-    - setup
-    - seed
+  - setup
+  - seed
 
 image: docker:latest
 
 services:
-    - docker:dind
+  - docker:dind
 
 # Can use UI to hide passwords
 variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://localhost:2375
-    DOCKER_USER: willwangkelda
-    KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
-    HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
-    KUBE_NAMESPACE: hotrod
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_USER: willwangkelda
+  KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
+  HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
+  KUBE_NAMESPACE: hotrod
 
 before_script:
-    - apk update && apk add curl bash openssl
-    - curl -LO $KUBECTL_URL
-    - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-    - mkdir -p $HOME/.kube
-    - cat $KUBECONFIG > $HOME/.kube/config
-    - curl $HELM_URL | bash
-    - helm init --client-only
+  - apk update && apk add curl bash openssl
+  - curl -LO $KUBECTL_URL
+  - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+  - mkdir -p $HOME/.kube
+  - cat $KUBECONFIG > $HOME/.kube/config
+  - curl $HELM_URL | bash
+  - helm init --client-only
 
 redis:
-    stage: setup
-    environment:
-        name: StageEnv
-    script:
-    - helm upgrade --install
-      --set cluster.slaveCount=2
-      --set password=$REDIS_PASS
-      --namespace $KUBE_NAMESPACE
-      --wait
-      --recreate-pods
-      hotrod-redis stable/redis
+  stage: setup
+  environment:
+      name: StageEnv
+  script:
+  - helm upgrade --install
+    --set cluster.slaveCount=2
+    --set password=$REDIS_PASS
+    --namespace $KUBE_NAMESPACE
+    --wait
+    --recreate-pods
+    hotrod-redis stable/redis
 
 postgres:
-    stage: setup
-    environment:
-        name: StageEnv
-    script:
-    - helm upgrade --install
-      --set postgresUser=$POSTGRES_USER
-      --set postgresPassword=$POSTGRES_PASS
-      --namespace $KUBE_NAMESPACE
-      --wait
-      --recreate-pods
-      hotrod-postgres stable/postgresql
+  stage: setup
+  environment:
+      name: StageEnv
+  script:
+  - helm upgrade --install
+    --set postgresUser=$POSTGRES_USER
+    --set postgresPassword=$POSTGRES_PASS
+    --namespace $KUBE_NAMESPACE
+    --wait
+    --recreate-pods
+    hotrod-postgres stable/postgresql
 
 build:
-    stage: setup
-    before_script:
-    - echo "skip install kubectl and helm"
-    script:
-    - docker login -u $DOCKER_USER -p $DOCKER_PASS
-    - docker pull $DOCKER_USER/hotrod-seed
-    - docker build -t $DOCKER_USER/hotrod-seed --cache-from $DOCKER_USER/hotrod-seed scripts/
-    - docker push $DOCKER_USER/hotrod-seed
+  stage: setup
+  before_script:
+  - echo "skip install kubectl and helm"
+  script:
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - docker pull $DOCKER_USER/hotrod-seed
+  - docker build -t $DOCKER_USER/hotrod-seed --cache-from $DOCKER_USER/hotrod-seed scripts/
+  - docker push $DOCKER_USER/hotrod-seed
 
-seed:
-    stage: seed
-    script:
-    - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
-    - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
-    - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
-    - kubectl delete job/seed --namespace $KUBE_NAMESPACE
-    - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
+stage:
+  stage: seed
+  environment:
+      name: StageEnv
+  script:
+  - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
+  - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
+  - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
+  - kubectl delete job/seed --namespace $KUBE_NAMESPACE
+  - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
+
+prod:
+  stage: seed
+  environment:
+      name: ProdEnv
+  when: manual
+  script:
+  - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
+  - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
+  - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
+  - kubectl delete job/seed --namespace $KUBE_NAMESPACE
+  - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
