@@ -18,6 +18,9 @@ func main() {
 		url = os.Getenv("REDIS_URL")
 	}
 	redisPass := os.Getenv("REDIS_PASS")
+	if redisPass == "REDIS_PASS_VALUE" {
+		redisPass = ""
+	}
 
 	client := redis.NewClient(&redis.Options{
 		Addr: url,
