@@ -34,10 +34,7 @@ var customers = []customer.Customer{
 func main() {
 	user := os.Getenv("POSTGRES_USER")
 	password := os.Getenv("POSTGRES_PASS")
-	url := "hotrod-postgres-postgresql" + ":" + os.Getenv("HOTROD_POSTGRES_POSTGRESQL_SERVICE_PORT")
-	if os.Getenv("POSTGRES_URL") != "POSTGRES_URL_VALUE" {
-		url = os.Getenv("POSTGRES_URL")
-	}
+	url := os.Getenv("POSTGRES_URL")
 	connectStr := fmt.Sprintf("postgres://%s:%s@%s?sslmode=disable", user, password, url)
 
 	db, err := sql.Open("postgres", connectStr)

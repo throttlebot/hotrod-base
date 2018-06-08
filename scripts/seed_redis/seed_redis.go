@@ -11,12 +11,7 @@ import (
 )
 
 func main() {
-	redisHost := "hotrod-redis-master"
-	redisPort := os.Getenv("HOTROD_REDIS_MASTER_SERVICE_PORT")
-	url := redisHost + ":" + redisPort
-	if os.Getenv("REDIS_URL") != "REDIS_URL_VALUE" {
-		url = os.Getenv("REDIS_URL")
-	}
+	url := os.Getenv("REDIS_URL")
 	redisPass := os.Getenv("REDIS_PASS")
 	if redisPass == "REDIS_PASS_VALUE" {
 		redisPass = ""
