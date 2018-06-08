@@ -71,6 +71,8 @@ stage:
   - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
   - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
   - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
+  - sed -i -e s/REDIS_URL_VALUE/hotrod-redis-master:6379/g seed.yaml
+  - sed -i -e s/POSTGRES_URL_VALUE/hotrod-postgres-postgresql:5432/g seed.yaml
   - kubectl delete job/seed --namespace $KUBE_NAMESPACE || true
   - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
 
@@ -82,7 +84,7 @@ prod:
   script:
   - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
   - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
-  - sed -i -e s/POSTGRES_URL_VALUE/$EXTERNAL_POSTGRES_URL/g seed.yaml
-  - sed -i -e s/REDIS_URL_VALUE/$EXTERNAL_REDIS_URL/g seed.yaml
+  - sed -i -e s/POSTGRES_URL_VALUE/$EXTERNAL_POSTGRES_URL:5432/g seed.yaml
+  - sed -i -e s/REDIS_URL_VALUE/$EXTERNAL_REDIS_URL:6379/g seed.yaml
   - kubectl delete job/seed --namespace $KUBE_NAMESPACE || true
   - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
