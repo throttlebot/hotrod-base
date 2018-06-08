@@ -1,6 +1,7 @@
 stages:
-  - setup
-  - seed
+  - test
+#  - setup
+#  - seed
 
 image: docker:latest
 
@@ -27,64 +28,73 @@ before_script:
   - curl $HELM_URL | bash
   - helm init --client-only
 
-redis:
-  stage: setup
+test:
+  stage: test
   environment:
-      name: StageEnv
+    name: StageEnv
+  variables:
+    KUBERNETES_NAMESPACE_OVERWRITE: hotrod
   script:
-  - helm upgrade --install
-    --set cluster.slaveCount=2
-    --set password=$REDIS_PASS
-    --namespace $KUBE_NAMESPACE
-    --wait
-    --recreate-pods
-    hotrod-redis stable/redis
+    kubectl get pods -n hotrod
 
-postgres:
-  stage: setup
-  environment:
-      name: StageEnv
-  script:
-  - helm upgrade --install
-    --set postgresUser=$POSTGRES_USER
-    --set postgresPassword=$POSTGRES_PASS
-    --namespace $KUBE_NAMESPACE
-    --wait
-    --recreate-pods
-    hotrod-postgres stable/postgresql
-
-build:
-  stage: setup
-  before_script:
-  - echo "skip install kubectl and helm"
-  script:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - docker pull $DOCKER_USER/hotrod-seed
-  - docker build -t $DOCKER_USER/hotrod-seed --cache-from $DOCKER_USER/hotrod-seed scripts/
-  - docker push $DOCKER_USER/hotrod-seed
-
-stage:
-  stage: seed
-  environment:
-      name: StageEnv
-  script:
-  - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
-  - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
-  - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
-  - sed -i -e s/REDIS_URL_VALUE/hotrod-redis-master:6379/g seed.yaml
-  - sed -i -e s/POSTGRES_URL_VALUE/hotrod-postgres-postgresql:5432/g seed.yaml
-  - kubectl delete job/seed --namespace $KUBE_NAMESPACE || true
-  - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
-
-prod:
-  stage: seed
-  environment:
-      name: ProdEnv
-  when: manual
-  script:
-  - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
-  - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
-  - sed -i -e s/POSTGRES_URL_VALUE/$EXTERNAL_POSTGRES_URL:5432/g seed.yaml
-  - sed -i -e s/REDIS_URL_VALUE/$EXTERNAL_REDIS_URL:6379/g seed.yaml
-  - kubectl delete job/seed --namespace $KUBE_NAMESPACE || true
-  - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
+#redis:
+#  stage: setup
+#  environment:
+#      name: StageEnv
+#  script:
+#  - helm upgrade --install
+#    --set cluster.slaveCount=2
+#    --set password=$REDIS_PASS
+#    --namespace $KUBE_NAMESPACE
+#    --wait
+#    --recreate-pods
+#    hotrod-redis stable/redis
+#
+#postgres:
+#  stage: setup
+#  environment:
+#      name: StageEnv
+#  script:
+#  - helm upgrade --install
+#    --set postgresUser=$POSTGRES_USER
+#    --set postgresPassword=$POSTGRES_PASS
+#    --namespace $KUBE_NAMESPACE
+#    --wait
+#    --recreate-pods
+#    hotrod-postgres stable/postgresql
+#
+#build:
+#  stage: setup
+#  before_script:
+#  - echo "skip install kubectl and helm"
+#  script:
+#  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+#  - docker pull $DOCKER_USER/hotrod-seed
+#  - docker build -t $DOCKER_USER/hotrod-seed --cache-from $DOCKER_USER/hotrod-seed scripts/
+#  - docker push $DOCKER_USER/hotrod-seed
+#
+#stage:
+#  stage: seed
+#  environment:
+#      name: StageEnv
+#  script:
+#  - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
+#  - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
+#  - sed -i -e s/REDIS_PASS_VALUE/$REDIS_PASS/g seed.yaml
+#  - sed -i -e s/REDIS_URL_VALUE/hotrod-redis-master:6379/g seed.yaml
+#  - sed -i -e s/POSTGRES_URL_VALUE/hotrod-postgres-postgresql:5432/g seed.yaml
+#  - kubectl delete job/seed --namespace $KUBE_NAMESPACE || true
+#  - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
+#
+#prod:
+#  stage: seed
+#  environment:
+#      name: ProdEnv
+#  when: manual
+#  script:
+#  - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
+#  - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
+#  - sed -i -e s/POSTGRES_URL_VALUE/$EXTERNAL_POSTGRES_URL:5432/g seed.yaml
+#  - sed -i -e s/REDIS_URL_VALUE/$EXTERNAL_REDIS_URL:6379/g seed.yaml
+#  - kubectl delete job/seed --namespace $KUBE_NAMESPACE || true
+#  - kubectl apply -f seed.yaml --namespace $KUBE_NAMESPACE
