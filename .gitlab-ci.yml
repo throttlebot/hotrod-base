@@ -27,15 +27,6 @@ before_script:
   - curl $HELM_URL | bash
   - helm init --client-only
 
-test:
-  stage: test
-  environment:
-    name: StageEnv
-  variables:
-    KUBERNETES_NAMESPACE_OVERWRITE: hotrod
-  script:
-    kubectl get pods -n hotrod
-
 redis:
   stage: setup
   environment:
