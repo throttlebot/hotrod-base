@@ -28,3 +28,19 @@
     kubectl rollout status -f logstash.yaml -n logging
     kubectl create -f filebeat-kubernetes.yaml -n logging
     cd ..
+
+### Redis
+
+    helm install stable/redis \
+    --set cluster.slaveCount=2 \
+    --set password=$REDIS_PASS \
+    --namespace hotrod \
+    --name hotrod-redis
+
+### Postgres
+
+    helm install stable/postgresql \
+    --set postgresUser=$POSTGRES_USER
+    --set postgresPassword=$POSTGRES_PASS
+    --namespace hotrod \
+    --name hotrod-postgres

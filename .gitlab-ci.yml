@@ -27,34 +27,9 @@ before_script:
   - curl $HELM_URL | bash
   - helm init --client-only
 
-redis:
-  stage: setup
-  environment:
-      name: StageEnv
-  script:
-  - helm upgrade --install
-    --set cluster.slaveCount=2
-    --set password=$REDIS_PASS
-    --namespace $KUBE_NAMESPACE
-    --wait
-    --recreate-pods
-    hotrod-redis stable/redis
-
-postgres:
-  stage: setup
-  environment:
-      name: StageEnv
-  script:
-  - helm upgrade --install
-    --set postgresUser=$POSTGRES_USER
-    --set postgresPassword=$POSTGRES_PASS
-    --namespace $KUBE_NAMESPACE
-    --wait
-    --recreate-pods
-    hotrod-postgres stable/postgresql
-
 build:
   stage: setup
+  when: manual
   before_script:
   - echo "skip install kubectl and helm"
   script:
@@ -67,6 +42,7 @@ stage:
   stage: seed
   environment:
       name: StageEnv
+  when: manual
   script:
   - sed -i -e s/POSTGRES_USER_VALUE/$POSTGRES_USER/g seed.yaml
   - sed -i -e s/POSTGRES_PASS_VALUE/$POSTGRES_PASS/g seed.yaml
