@@ -1,4 +1,17 @@
-logging:
+### Prometheus
+
+    helm install stable/prometheus \
+    --tiller-namespace gitlab-managed-apps \
+    --namespace monitoring --name monitoring \
+    -f monitoring/values.yaml
+
+### Grafana
+
+    kubectl apply -f monitoring/grafana.yaml \
+    --namespace monitoring
+
+### EL(F)K
+
     cd logging
     kubectl create namespace logging
     kubectl create -f es-discovery-svc.yaml -n logging
@@ -14,12 +27,4 @@ logging:
     kubectl create -f logstash.yaml -n logging
     kubectl rollout status -f logstash.yaml -n logging
     kubectl create -f filebeat-kubernetes.yaml -n logging
-    cd ..
-
-monitoring:
-    cd monitoring
-    kubectl create namespace monitoring
-    kubectl create -f prom-config.yaml -n monitoring
-    kubectl create -f prom.yaml -n monitoring
-    kubectl create -f grafana.yaml -n monitoring
     cd ..
