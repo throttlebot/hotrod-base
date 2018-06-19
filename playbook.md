@@ -44,3 +44,14 @@
     --set postgresPassword=$POSTGRES_PASS
     --namespace hotrod \
     --name hotrod-postgres
+
+### Istio
+
+    curl -L https://github.com/istio/istio/releases/download/0.8.0/istio-0.8.0-osx.tar.gz | tar xz
+    helm install istio-*/install/kubernetes/helm/istio --name istio --namespace istio-system \
+        --set sidecarInjectorWebhook.enabled=false \
+        --set prometheus.enabled=false
+    cd ..
+
+    Note that the Istio sidecars must still be deployed. This is done as part
+    of the GitLab pipeline for each service.
