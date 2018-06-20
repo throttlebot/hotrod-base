@@ -10,6 +10,7 @@
 ## Prometheus
 
     helm install stable/prometheus \
+    --version 6.7.2 \
     --namespace monitoring --name monitoring \
     -f monitoring/values.yaml
 
