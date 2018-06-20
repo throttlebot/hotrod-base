@@ -1,15 +1,15 @@
-### Prometheus
+## Prometheus
 
     helm install stable/prometheus \
     --namespace monitoring --name monitoring \
     -f monitoring/values.yaml
 
-### Grafana
+## Grafana
 
     kubectl apply -f monitoring/grafana.yaml \
     --namespace monitoring
 
-### EL(F)K
+## EL(F)K
 
     cd logging
     kubectl create namespace logging
@@ -28,9 +28,9 @@
     kubectl create -f filebeat-kubernetes.yaml -n logging
     cd ..
 
-### Redis
+## Redis
 
-#### Staging
+### Staging
 
     helm install stable/redis \
     --set cluster.slaveCount=2 \
@@ -38,15 +38,15 @@
     --namespace hotrod \
     --name hotrod-redis
 
-#### Production
+### Production
 
     Using Google MemoryStore, set up a redis instance in the same region and zone
     Following the 'Connecting from GKE' instructions to set up iptables in your cluster
     Retrieve DB internal ip and password, and set as variables in appropriate places
 
-### Postgres
+## Postgres
 
-#### Staging
+### Staging
 
     helm install stable/postgresql \
     --set postgresUser=$POSTGRES_USER \
@@ -54,7 +54,7 @@
     --namespace hotrod \
     --name hotrod-postgres
 
-#### Production
+### Production
 
     Using Google CouldSQL, boot up a PostgreSql DB in the same region and zone
     Create a user hotrod with password and create a database 'customers'
@@ -69,3 +69,13 @@
     --name gitlab
     Go to Settings->CI/CD->Runners and enable for this project
     Click on the edit and untick the box that locs for this project only, save.
+
+## Istio
+
+    curl -L https://github.com/istio/istio/releases/download/0.8.0/istio-0.8.0-osx.tar.gz | tar xz
+    helm install istio-*/install/kubernetes/helm/istio --name istio --namespace istio-system \
+        --set sidecarInjectorWebhook.enabled=false \
+        --set prometheus.enabled=false
+
+    Note that the Istio sidecars must still be deployed. This is done as part
+    of the GitLab pipeline for each service.
