@@ -64,8 +64,9 @@
 
 ## Runner
 
-    helm install gitlab-runner \
-    --set $RUNNER_REGISTRATION_TOKEN \
+    helm install ./gitlab-runner \
+    --set runnerRegistrationToken=$RUNNER_REGISTRATION_TOKEN \
+    --set runners.namespaceOverwrite=".*" \
     --name gitlab
     Go to Settings->CI/CD->Runners and enable for this project
     Click on the edit and untick the box that locks for this project only, save.
