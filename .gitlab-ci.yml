@@ -15,8 +15,8 @@ variables:
   KUBECTL_URL: https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl
   HELM_URL: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
   KUBE_NAMESPACE: hotrod
-  EXTERNAL_POSTGRES_URL: 35.197.41.123:5432
-  EXTERNAL_REDIS_URL: 10.0.0.3:6379
+  EXTERNAL_POSTGRES_URL: 35.197.41.123
+  EXTERNAL_REDIS_URL: 10.0.0.3
 
 before_script:
   - apk update && apk add curl bash openssl
