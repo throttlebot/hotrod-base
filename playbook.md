@@ -1,7 +1,6 @@
 ### Prometheus
 
     helm install stable/prometheus \
-    --tiller-namespace gitlab-managed-apps \
     --namespace monitoring --name monitoring \
     -f monitoring/values.yaml
 
@@ -31,16 +30,42 @@
 
 ### Redis
 
+#### Staging
+
     helm install stable/redis \
     --set cluster.slaveCount=2 \
     --set password=$REDIS_PASS \
     --namespace hotrod \
     --name hotrod-redis
 
+#### Production
+
+    Using Google MemoryStore, set up a redis instance in the same region and zone
+    Following the 'Connecting from GKE' instructions to set up iptables in your cluster
+    Retrieve DB internal ip and password, and set as variables in appropriate places
+
 ### Postgres
 
+#### Staging
+
     helm install stable/postgresql \
-    --set postgresUser=$POSTGRES_USER
-    --set postgresPassword=$POSTGRES_PASS
+    --set postgresUser=$POSTGRES_USER \
+    --set postgresPassword=$POSTGRES_PASS \
     --namespace hotrod \
     --name hotrod-postgres
+
+#### Production
+
+    Using Google CouldSQL, boot up a PostgreSql DB in the same region and zone
+    Create a user hotrod with password and create a database 'customers'
+    Set inbound authorization to 0.0.0.0/0 or some other CIDR that accepts connection from GKE
+    Retrieve DB external ip and password for user hotrod
+    Set ip and password as variables in appropriate places in all hotrod repos
+
+## Runner
+
+    helm install --repo gitlab-runner \
+    --set $RUNNER_REGISTRATION_TOKEN \
+    --name gitlab
+    Go to Settings->CI/CD->Runners and enable for this project
+    Click on the edit and untick the box that locs for this project only, save.
