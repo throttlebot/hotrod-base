@@ -28,7 +28,7 @@ var (
 
 	// MySQLGetDelay is how long retrieving a customer record takes.
 	// Using large value mostly because I cannot click the button fast enough to cause a queue.
-	MySQLGetDelay = 0 * time.Millisecond
+	MySQLGetDelay = 10 * time.Millisecond
 
 	// MySQLGetDelayStdDev is standard deviation
 	MySQLGetDelayStdDev = MySQLGetDelay / 10
@@ -45,7 +45,7 @@ var (
 	RedisFindDelayStdDev = RedisFindDelay / 4
 
 	// RedisGetDelay is how long retrieving a driver record takes
-	RedisGetDelay = 0 * time.Millisecond
+	RedisGetDelay = 10 * time.Millisecond
 
 	// RedisGetDelayStdDev is standard deviation
 	RedisGetDelayStdDev = RedisGetDelay / 4
