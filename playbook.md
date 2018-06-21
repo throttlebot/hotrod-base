@@ -1,6 +1,16 @@
+## Helm
+
+    kubectl apply -f istio-0.8.0/install/kubernetes/helm/helm-service-account.yaml
+
+    helm init --service-account tiller
+
+    If Tiller has already been installed to the cluster, you'll need to `helm
+    reset --force` before running the `helm init` command.
+
 ## Prometheus
 
     helm install stable/prometheus \
+    --version 6.7.2 \
     --namespace monitoring --name monitoring \
     -f monitoring/values.yaml
 
