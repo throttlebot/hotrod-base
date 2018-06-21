@@ -39,7 +39,7 @@ var (
 	// 'driver' service
 
 	// RedisFindDelay is how long finding closest drivers takes
-	RedisFindDelay = 0 * time.Millisecond
+	RedisFindDelay = 10 * time.Millisecond
 
 	// RedisFindDelayStdDev is standard deviation
 	RedisFindDelayStdDev = RedisFindDelay / 4
