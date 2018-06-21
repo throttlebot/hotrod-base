@@ -7,6 +7,12 @@
     If Tiller has already been installed to the cluster, you'll need to `helm
     reset --force` before running the `helm init` command.
 
+## Ingress
+
+    helm install stable/nginx-ingress \
+    --namespace hotrod --name nginx \
+    -f ingress/values.yaml
+
 ## Prometheus
 
     helm install stable/prometheus \
