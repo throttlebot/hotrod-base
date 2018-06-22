@@ -1,17 +1,15 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 
 	"database/sql"
 
 	_ "github.com/lib/pq"
-
-	"github.com/kelda/hotrod/services/customer"
 )
 
-var customers = []customer.Customer{
+var customers = []struct{ ID, Name, Location string }{
 	{
 		ID:       "123",
 		Name:     "Rachel's Floral Designs",
