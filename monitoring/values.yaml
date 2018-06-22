@@ -736,14 +736,14 @@ alertmanagerFiles:
         slack_configs:
          - channel: '#alerts'
            title: 
-           text: "<!channel> \nDescription: Some example description!!!\nSummary: {{ .CommonAnnotations.summary }}"
+           text: "<!channel> \nSummary: {{ .CommonAnnotations.summary }}"
            send_resolved: true
 
     route:
       group_wait: 10s
       group_interval: 10s
       receiver: default-receiver
-      repeat_interval: 1h
+      repeat_interval: 5m
 
 ## Prometheus server ConfigMap entries
 ##
@@ -752,13 +752,13 @@ serverFiles:
     groups:
     - name: example
       rules:
-      - alert: ExampleAlert
-        expr: sum(frontend_http_requests_total{code="200"}) > 150
+      - alert: ServerErrorAlert
+        expr: sum(rate(nginx_upstream_responses_total{status_code="5xx", upstream="hotrod-hotrod-frontend-8080"}[2m])) / sum(rate(nginx_upstream_responses_total{upstream="hotrod-hotrod-frontend-8080"}[2m])) * 100 > 10 
         for: 1m
         labels:
-          severity: Info
+          severity: Error
         annotations:
-          summary: "This is a test alert that tells you that the number of 200 codes for frontend is now at {{ $value }}."
+          summary: "The number of 5XX codes is now at {{ $value }} percent!."
   rules: {}
 
   prometheus.yml:
