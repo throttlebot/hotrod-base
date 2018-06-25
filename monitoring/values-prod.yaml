@@ -736,7 +736,7 @@ alertmanagerFiles:
         slack_configs:
          - channel: '#alerts'
            title: 
-           text: "<!channel> \nSummary: {{ .CommonAnnotations.summary }}"
+           text: "<!channel> \nCluster: Production \nSummary: {{ .CommonAnnotations.summary }}"
            send_resolved: true
 
     route:

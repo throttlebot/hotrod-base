@@ -735,8 +735,8 @@ alertmanagerFiles:
       - name: default-receiver
         slack_configs:
          - channel: '#alerts'
-           title: 
-           text: "<!channel> \nSummary: {{ .CommonAnnotations.summary }}"
+           title:
+           text: "<!channel> \nCluster: Stage \nSummary: {{ .CommonAnnotations.summary }}"
            send_resolved: true
 
     route:
@@ -748,7 +748,17 @@ alertmanagerFiles:
 ## Prometheus server ConfigMap entries
 ##
 serverFiles:
-  alerts: {}
+  alerts:
+    groups:
+    - name: example
+      rules:
+      - alert: ServerErrorAlert
+        expr: sum(rate(nginx_upstream_responses_total{status_code="5xx", upstream="hotrod-hotrod-frontend-8080"}[2m])) / sum(rate(nginx_upstream_responses_total{upstream="hotrod-hotrod-frontend-8080"}[2m])) * 100 > 10
+        for: 1m
+        labels:
+          severity: Error
+        annotations:
+          summary: "The number of 5XX codes is now at {{ $value }} percent!."
   rules: {}
 
   prometheus.yml:
