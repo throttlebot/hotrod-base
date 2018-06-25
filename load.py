@@ -16,7 +16,7 @@ def work(host, id):
 		r = requests.get(url)
 		payload = {'customer': str(random.choice(customers)), 'nonse': '0.022067955955792473'}
 		r = requests.get(url + "dispatch", params=payload)
-		time.sleep(max(5 - (time.time() - t), 0))
+		time.sleep(max(10 - (time.time() - t), 0))
 	print "Thread {} dying".format(id)
 
 
