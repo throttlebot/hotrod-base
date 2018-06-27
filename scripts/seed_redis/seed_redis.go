@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-redis/redis"
 
-	"github.com/kelda/hotrod/services/driver"
+	"gitlab.com/will.wang1/hotrod-driver/driver"
 )
 
 func main() {

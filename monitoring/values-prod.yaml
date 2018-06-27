@@ -738,6 +738,8 @@ alertmanagerFiles:
            title: 
            text: "<!channel> \nCluster: Production \nSummary: {{ .CommonAnnotations.summary }}"
            send_resolved: true
+        pagerduty_configs:
+          - service_key: 5ed08d9ff8184385a8a0341e8751bba2
 
     route:
       group_wait: 10s
