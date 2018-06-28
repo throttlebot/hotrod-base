@@ -33,10 +33,6 @@
   branch = "master"
   name = "github.com/lib/pq"
 
-[[constraint]]
-  branch = "istio"
-  name = "gitlab.com/will.wang1/hotrod-driver"
-
 [prune]
   go-tests = true
   unused-packages = true

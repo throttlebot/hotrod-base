@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-redis/redis"
 
-	"gitlab.com/will.wang1/hotrod-driver/driver"
 )
 
 func main() {
@@ -22,17 +21,12 @@ func main() {
 		Password: redisPass,
 	})
 
-	var drivers []driver.Driver
 	for i := 0; i < 50; i++ {
-		drivers = append(drivers, driver.Driver{
-			DriverID: fmt.Sprintf("T7%05dC", rand.Int()%100000),
-			Location: fmt.Sprintf("%d,%d", rand.Int()%1000, rand.Int()%1000),
-		})
-	}
-
-	for _, driver := range drivers {
-		if err := client.Set(driver.DriverID, driver.Location, 0).Err(); err != nil {
-			panic(err)
+		if err := client.Set(
+			fmt.Sprintf("T7%05dC", rand.Int()%100000),
+			fmt.Sprintf("%d,%d", rand.Int()%1000, rand.Int()%1000),
+			0).Err(); err != nil {
+				panic(err)
 		}
 	}
 }

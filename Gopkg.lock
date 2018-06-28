@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/apache/thrift"
-  packages = ["lib/go/thrift"]
-  revision = "53dd39833a08ce33582e5ff31fa18bb4735d6731"
-  version = "0.9.3"
-
-[[projects]]
   name = "github.com/go-redis/redis"
   packages = [
     ".",
@@ -31,96 +25,9 @@
   ]
   revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
-[[projects]]
-  name = "github.com/opentracing/opentracing-go"
-  packages = [
-    ".",
-    "ext",
-    "log"
-  ]
-  revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
-  version = "v1.0.2"
-
-[[projects]]
-  name = "github.com/sirupsen/logrus"
-  packages = ["."]
-  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
-  version = "v1.0.5"
-
-[[projects]]
-  name = "github.com/uber-go/atomic"
-  packages = ["."]
-  revision = "1ea20fb1cbb1cc08cbd0d913a96dead89aa18289"
-  version = "v1.3.2"
-
-[[projects]]
-  name = "github.com/uber/tchannel-go"
-  packages = [
-    ".",
-    "internal/argreader",
-    "relay",
-    "thrift",
-    "thrift/gen-go/meta",
-    "tnet",
-    "tos",
-    "trand",
-    "typed"
-  ]
-  revision = "7f5c12c66261f3ac3c5dde959d65eed59e3b63af"
-  version = "v1.11.0"
-
-[[projects]]
-  branch = "master"
-  name = "gitlab.com/kelda-hotrod/hotrod-base"
-  packages = [
-    "config",
-    "pkg/delay"
-  ]
-  revision = "be2db14613ea2106ca643a0dcdd46790cc152116"
-
-[[projects]]
-  branch = "master"
-  name = "gitlab.com/kelda-hotrod/hotrod-driver"
-  packages = ["driver/thrift-gen/driver"]
-  revision = "6d6b7951b7eb2eb1a75444dc6f0cfdb51c25f9ad"
-
-[[projects]]
-  branch = "istio"
-  name = "gitlab.com/will.wang1/hotrod-driver"
-  packages = ["driver"]
-  revision = "b85048f200035c9b68c4e41f4e9051b893a6846b"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
-  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/net"
-  packages = [
-    "bpf",
-    "context",
-    "internal/iana",
-    "internal/socket",
-    "ipv4",
-    "ipv6"
-  ]
-  revision = "e514e69ffb8bc3c76a71ae40de0118d794855992"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/sys"
-  packages = [
-    "unix",
-    "windows"
-  ]
-  revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d55b795b49ac01269490f144ecda7ff136224945458b759be385cedf910d27d8"
+  inputs-digest = "94a4983ea23303eecc2304eb9bfcfa8100740e3aa6337a645784bc86e83b7bc5"
   solver-name = "gps-cdcl"
   solver-version = 1
