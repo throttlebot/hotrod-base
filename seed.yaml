@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: seed
+  namespace: hotrod
 spec:
   template:
     spec:
@@ -13,14 +14,29 @@ spec:
         - name: GET_HOSTS_FROM
           value: dns
         - name: POSTGRES_USER
-          value: POSTGRES_USER_VALUE
+          valueFrom:
+            configMapKeyRef:
+              name: customer-configs
+              key: postgres-user
         - name: POSTGRES_PASS
-          value: POSTGRES_PASS_VALUE
+          valueFrom:
+            secretKeyRef:
+              name: postgres-postgresql
+              key: postgres-password
         - name: REDIS_PASS
-          value: REDIS_PASS_VALUE
+          valueFrom:
+            secretKeyRef:
+              name: redis
+              key: redis-password        
         - name: POSTGRES_URL
-          value: POSTGRES_URL_VALUE
+          valueFrom:
+            configMapKeyRef:
+              name: customer-configs
+              key: postgres-url
         - name: REDIS_URL
-          value: REDIS_URL_VALUE
+          valueFrom:
+            configMapKeyRef:
+              name: driver-configs
+              key: redis-url
       restartPolicy: Never
   backoffLimit: 4

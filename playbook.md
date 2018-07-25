@@ -1,6 +1,11 @@
+## Setup
+
+    kubectl create -f storageclass.yaml
+    kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
 ## Helm
 
-    kubectl apply -f istio-0.8.0/install/kubernetes/helm/helm-service-account.yaml
+    kubectl apply -f helm-rbac.yaml
 
     helm init --service-account tiller
 
@@ -50,9 +55,9 @@
 
     helm install stable/redis \
     --set cluster.slaveCount=2 \
-    --set password=$REDIS_PASS \
+    --set password=keldakelda \
     --namespace hotrod \
-    --name hotrod-redis
+    --name redis
 
 ### Production
 
@@ -65,10 +70,10 @@
 ### Staging
 
     helm install stable/postgresql \
-    --set postgresUser=$POSTGRES_USER \
-    --set postgresPassword=$POSTGRES_PASS \
+    --set postgresUser=hotrod \
+    --set postgresPassword=keldakelda \
     --namespace hotrod \
-    --name hotrod-postgres
+    --name postgres
 
 ### Production
 
