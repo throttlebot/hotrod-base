@@ -69,4 +69,20 @@ func main() {
 			panic(err)
 		}
 	}
+
+	_, err = db.Exec(`CREATE TABLE accounts (
+	id varchar(8) PRIMARY KEY,
+	balance integer
+	)`)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, customer := range customers {
+		_, err = db.Exec("INSERT INTO accounts VALUES ($1, $2)",
+			customer.ID, 100)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
