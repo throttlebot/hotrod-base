@@ -13,19 +13,19 @@ var customers = []struct{ ID, Name, Location string }{
 	{
 		ID:       "123",
 		Name:     "Rachel's Floral Designs",
-		Location: "115,277",
+		Location: "0,0",
 	}, {
 		ID:       "567",
 		Name:     "Amazing Coffee Roasters",
-		Location: "211,653",
+		Location: "0,20",
 	}, {
 		ID:       "392",
 		Name:     "Trom Chocolatier",
-		Location: "577,322",
+		Location: "20,0",
 	}, {
 		ID:       "731",
 		Name:     "Japanese Deserts",
-		Location: "728,326",
+		Location: "20,20",
 	},
 }
 
@@ -33,6 +33,10 @@ func main() {
 	user := os.Getenv("POSTGRES_USER")
 	password := os.Getenv("POSTGRES_PASS")
 	url := os.Getenv("POSTGRES_URL")
+	fmt.Println("POSTGRES_USER", user)
+	fmt.Println("POSTGRES_PASS", password)
+	fmt.Println("POSTGRES_URL", url)
+
 	connectStr := fmt.Sprintf("postgres://%s:%s@%s?sslmode=disable", user, password, url)
 
 	db, err := sql.Open("postgres", connectStr)
@@ -69,6 +73,8 @@ func main() {
 			panic(err)
 		}
 	}
+
+	_, err = db.Exec("DROP TABLE IF EXISTS accounts")
 
 	_, err = db.Exec(`CREATE TABLE accounts (
 	id varchar(8) PRIMARY KEY,

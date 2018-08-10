@@ -8,8 +8,9 @@ spec:
     spec:
       containers:
       - name: seed
-        image: registry.hub.docker.com/willwangkelda/hotrod-seed
+        image: registry.hub.docker.com/willwangkelda/hotrod-seed:map
         command: ["make",  "seed"]
+        imagePullPolicy: Always
         env:
         - name: GET_HOSTS_FROM
           value: dns
