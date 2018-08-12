@@ -1,0 +1,11 @@
+{
+    "name": "hotrod-spec",
+    "version": "1.0.0",
+    "main": "./main.js",
+    "author": "Hantao Wang",
+    "license": "MIT",
+    "dependencies": {
+        "@quilt/quilt": "file:~/go/src/github.com/quilt/quilt",
+        "fs": "0.0.1-security"
+    }
+}

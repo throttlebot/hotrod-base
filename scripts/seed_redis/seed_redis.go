@@ -20,7 +20,7 @@ func main() {
 		Password: redisPass,
 	})
 
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 500; i++ {
 		if err := client.Set(
 			fmt.Sprintf("T7%05dC", rand.Int()%100000),
 			fmt.Sprintf("%d,%d", rand.Int()%20, rand.Int()%20),
