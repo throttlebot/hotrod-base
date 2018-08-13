@@ -1,5 +1,5 @@
-const { Container, allow, publicInternet } = require('@quilt/quilt');
-const assert = require('assert');
+const { Service, Container, allow, publicInternet } = require('@quilt/quilt');
+const haproxy = require('@quilt/haproxy');
 const fs = require("fs");
 
 function hotrod() {
@@ -26,25 +26,35 @@ function hotrod() {
             'POSTGRES_URL': this.postgres.getHostname() + ':5432',
             'POSTGRES_PASS': 'temppass',
         },
-    });
+    }).replicate(this.instance_number);
 
     this.driver = new Container('hotrod-driver', 'hantaowang/hotrod-driver', {
         env: {
             'REDIS_URL': this.redis.getHostname() + ':6379',
         },
-    });
+    }).replicate(this.instance_number);
 
-    this.route = new Container('hotrod-route', 'hantaowang/hotrod-route');
+    this.route = new Container('hotrod-route', 'hantaowang/hotrod-route').replicate(this.instance_number);
 
-    this.mapper = new Container('hotrod-mapper', 'hantaowang/hotrod-mapper');
-
-    this.api = new Container('hotrod-api', 'hantaowang/hotrod-api', {
+    this.mapper = new Container('hotrod-mapper', 'hantaowang/hotrod-mapper', {
         env: {
-            'HOTROD_CUSTOMER_HOST': this.customer.getHostname(),
-            'HOTROD_DRIVER_HOST': this.driver.getHostname(),
-            'HOTROD_ROUTE_HOST': this.route.getHostname(),
+            'BUCKET_ROOT': 'http://s3-us-west-1.amazonaws.com/hotrod-app/graph/',
         },
-    });
+    }).replicate(this.instance_number);
+
+    this.api = []
+    for (i = 0; i < this.instance_number; i++) {
+        this.api.push(new Container('hotrod-api', 'hantaowang/hotrod-api', {
+            env: {
+                'HOTROD_CUSTOMER_HOST': this.customer[i].getHostname(),
+                'HOTROD_DRIVER_HOST': this.driver[i].getHostname(),
+                'HOTROD_ROUTE_HOST': this.route[i].getHostname(),
+            },
+        }));
+    }
+
+    this.api_haproxy = haproxy.simpleLoadBalancer(this.api);
+    this.map_haproxy = haproxy.simpleLoadBalancer(this.mapper);
 
     this.frontend = new Container('hotrod-frontend', 'hantaowang/hotrod-frontend', {
         filepathToContent: {
@@ -67,54 +77,54 @@ function hotrod() {
          },
     });
 
+   this.allow_apt_get = function allow_apt_get(services) {
+       services.forEach(function(c) {
+           allow(c, publicInternet, 80);
+           allow(c, publicInternet, 443);
+           allow(c, publicInternet, 53);
+           allow(publicInternet, c, 80);
+           allow(publicInternet, c, 443);
+           allow(publicInternet, c, 53);
+       });
+   }
+
    // Connect services
-   allow(this.api, this.customer, 8081);
-   allow(this.customer, this.api, 8081);
-   allow(this.api, this.driver, 8082);
-   allow(this.driver, this.api, 8082);
-   allow(this.api, this.route, 8083);
-   allow(this.route, this.api, 8083);
-   allow(this.driver, this.redis, 6379);
-   allow(this.redis, this.driver, 6379);
-   allow(this.customer, this.postgres, 5432);
-   allow(this.postgres, this.customer, 5432);
+   for (i = 0; i < this.instance_number; i++) {
+       allow(this.api[i], this.customer[i], 8081);
+       allow(this.customer[i], this.api[i], 8081);
+       allow(this.api[i], this.driver[i], 8082);
+       allow(this.driver[i], this.api[i], 8082);
+       allow(this.api[i], this.route[i], 8083);
+       allow(this.route[i], this.api[i], 8083);
+       
+       allow(this.driver[i], this.redis, 6379);
+       allow(this.redis, this.driver[i], 6379);
+       allow(this.customer[i], this.postgres, 5432);
+       allow(this.postgres, this.customer[i], 5432);
    
+       allow(this.api[i], this.api_haproxy, 80);
+       allow(this.mapper[i], this.map_haproxy, 80);
+       allow(this.api_haproxy, this.api[i], 80);
+       allow(this.map_haproxy, this.mapper[i], 80); 
+  }
+
+   this.allow_apt_get(this.mapper);
+   
+   allow(this.api_haproxy, this.ingress, haproxy.exposedPort);
+   allow(this.ingress, this.api_haproxy, haproxy.exposedPort);
+
+   allow(this.map_haproxy, this.ingress, haproxy.exposedPort);
+   allow(this.ingress, this.map_haproxy, haproxy.exposedPort);
+
    allow(this.ingress, publicInternet, 80);
    allow(publicInternet, this.ingress, 80);
-   allow(this.ingress, this.api, 8080);
-   allow(this.api, this.ingress, 8080);
    allow(this.ingress, this.frontend, 80);
    allow(this.frontend, this.ingress, 80);
-   allow(this.ingress, this.mapper, 8084);
-   allow(this.mapper, this.ingress, 8084);
-
-   allow(this.mapper, publicInternet, 80);
-   allow(this.mapper, publicInternet, 443);
-   allow(this.mapper, publicInternet, 53);
-   allow(publicInternet, this.mapper, 80);
-   allow(publicInternet, this.mapper, 443);
-   allow(publicInternet, this.mapper, 53);
 
    allow(this.seed, this.redis, 6379);
    allow(this.redis, this.seed, 6379);
    allow(this.seed, this.postgres, 5432);
    allow(this.postgres, this.seed, 5432);
-
-   // placements
-   this.placements = function placements(machines) {
-       assert(machines.length == 7);
-       for (i = 0; i < 3; i++) {
-           this.route[i].placeOn({diskSize: diskSizes[i]});
-           this.mapper[i].placeOn({diskSize: diskSizes[i]});
-           this.api[i].placeOn({diskSize: diskSizes[i]});
-           this.frontend[i].placeOn({diskSize: diskSizes[i + 3]});
-           this.customer[i].placeOn({diskSize: diskSizes[i + 3]});
-           this.driver[i].placeOn({diskSize: diskSizes[i + 3]});
-       }
-       this.ingress.placeOn({diskSize: diskSizes[6]});
-       this.redis.placeOn({diskSize: diskSizes[6]});
-       this.postgres.placeOn({diskSize: diskSizes[6]});
-   }
 
    //  deploy services
    this.deploy = function deploy(deployment) {
@@ -128,6 +138,8 @@ function hotrod() {
         deployment.deploy(this.ingress);
         deployment.deploy(this.mapper);
         deployment.deploy(this.seed);
+        deployment.deploy(this.api_haproxy);
+        deployment.deploy(this.map_haproxy);
     }
 }
 
