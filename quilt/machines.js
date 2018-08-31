@@ -14,7 +14,8 @@ function machines(num_machines) {
 
 	this.machine_list = []
 	this.sizes = []
-	for (size = 16; size < 16 + num_machines; size++) { 
+        this.initial_size = 750
+	for (size = this.initial_size; size < this.initial_size + num_machines; size++) { 
 		this.machine_list.push(new quilt.Machine({
     		provider: "Amazon",
     		size: "m4.large",
