@@ -9,10 +9,10 @@ function placements(hotrod, diskSizes) {
         assert(diskSizes.length >= requiredMachines);
       
         for (i = 0; i < hotrod.instance_number; i++) {
-           hotrod.route[i].placeOn({diskSize: diskSizes[i]});
+           hotrod.route[i].placeOn({diskSize: diskSizes[i + 3]});
            hotrod.mapper[i].placeOn({diskSize: diskSizes[i]});
            hotrod.api[i].placeOn({diskSize: diskSizes[i]});
-           hotrod.customer[i].placeOn({diskSize: diskSizes[i + 3]});
+           hotrod.customer[i].placeOn({diskSize: diskSizes[i]});
            hotrod.driver[i].placeOn({diskSize: diskSizes[i + 3]});
         }
         hotrod.frontend.placeOn({diskSize: diskSizes[3]});

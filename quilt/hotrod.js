@@ -11,7 +11,7 @@ function hotrod() {
         env: {
             'password': 'temppass',
             'port': '5432',
-        }
+        },
     });
 
     this.redis = new Container('redis', 'hantaowang/redis', {
@@ -20,7 +20,7 @@ function hotrod() {
        },
     });
    
-    this.customer = new Container('hotrod-customer', 'hantaowang/hotrod-customer', {
+    this.customer = new Container('hotrod-customer', 'hantaowang/hotrod-customer:log', {
         env: {
             'POSTGRES_USER': 'postgres',
             'POSTGRES_URL': this.postgres.getHostname() + ':5432',
@@ -28,15 +28,15 @@ function hotrod() {
         },
     }).replicate(this.instance_number);
 
-    this.driver = new Container('hotrod-driver', 'hantaowang/hotrod-driver', {
+    this.driver = new Container('hotrod-driver', 'hantaowang/hotrod-driver:log', {
         env: {
             'REDIS_URL': this.redis.getHostname() + ':6379',
         },
     }).replicate(this.instance_number);
 
-    this.route = new Container('hotrod-route', 'hantaowang/hotrod-route').replicate(this.instance_number);
+    this.route = new Container('hotrod-route', 'hantaowang/hotrod-route:log').replicate(this.instance_number);
 
-    this.mapper = new Container('hotrod-mapper', 'hantaowang/hotrod-mapper', {
+    this.mapper = new Container('hotrod-mapper', 'hantaowang/hotrod-mapper:log', {
         env: {
             'BUCKET_ROOT': 'http://s3-us-west-1.amazonaws.com/hotrod-app/graph/',
         },
@@ -44,7 +44,7 @@ function hotrod() {
 
     this.api = []
     for (i = 0; i < this.instance_number; i++) {
-        this.api.push(new Container('hotrod-api', 'hantaowang/hotrod-api', {
+        this.api.push(new Container('hotrod-api', 'hantaowang/hotrod-api:log', {
             env: {
                 'HOTROD_CUSTOMER_HOST': this.customer[i].getHostname(),
                 'HOTROD_DRIVER_HOST': this.driver[i].getHostname(),
@@ -53,8 +53,8 @@ function hotrod() {
         }));
     }
 
-    this.api_haproxy = haproxy.simpleLoadBalancer(this.api);
-    this.map_haproxy = haproxy.simpleLoadBalancer(this.mapper);
+    this.api_haproxy = haproxy.simpleLoadBalancer(this.api, "haproxy-hotrod-api");
+    this.map_haproxy = haproxy.simpleLoadBalancer(this.mapper, "haproxy-hotrod-mapper");
 
     this.frontend = new Container('hotrod-frontend', 'hantaowang/hotrod-frontend', {
         filepathToContent: {
