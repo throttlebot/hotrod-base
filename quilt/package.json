@@ -6,7 +6,7 @@
     "license": "MIT",
     "dependencies": {
         "@quilt/quilt": "file:~/go/src/github.com/quilt/quilt",
-        "@quilt/haproxy": "file:~/depend/haproxy",
+        "@quilt/haproxy": "file:../depend/haproxy",
         "fs": "0.0.1-security"
     }
 }
