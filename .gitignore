@@ -1,3 +1,4 @@
 .idea
 *.pyc
 istio-0.8.0/
+tmp/
