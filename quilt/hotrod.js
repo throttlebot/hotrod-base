@@ -65,6 +65,7 @@ function hotrod() {
     this.ingress = new Container('hotrod-ingress', 'library/nginx:1.7.9', {
         filepathToContent: {
             '/etc/nginx/conf.d/default.conf': fs.readFileSync('nginx-ingress.conf', 'utf-8'),
+	    '/etc/nginx/nginx.conf': fs.readFileSync('nginx-ingress-event.conf', 'utf-8'),
         },
     });
 

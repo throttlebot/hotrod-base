@@ -5,8 +5,8 @@
     "author": "Hantao Wang",
     "license": "MIT",
     "dependencies": {
-        "@quilt/quilt": "file:~/go/src/github.com/quilt/quilt",
-        "@quilt/haproxy": "file:../depend/haproxy",
+	"@quilt/quilt": "file:./../../quilt/",
+	"@quilt/haproxy": "file:./../haproxy/",
         "fs": "0.0.1-security"
     }
 }

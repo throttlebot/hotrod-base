@@ -1,18 +1,17 @@
 const quilt = require('@quilt/quilt');
 const machineFactory = require('./machines');
 const hotrod = require('./hotrod');
-const placement = require('./placements');
+const placement = require('./placement.js');
 const WorkloadGen = require("./workload.js");
 const utils = require("./utils.js");
 
-// const namespace = "hotrod-app-" + Math.floor(Math.random() * 10000).toString();
 const namespace = "hotrod-michael-ubuntu1"
 const deployment = quilt.createDeployment({namespace: namespace, adminACL: ['0.0.0.0/0']});
 
-var machines = new machineFactory(7);
+var machines = new machineFactory(9);
 
 hotrodApp = new hotrod();
-new placement(hotrodApp, machines.getSizes()).three_per();
+new placement(hotrodApp, machines.getSizes()).affinity_placement();
 
 const workload_count = 2;
 

@@ -22,6 +22,7 @@ function placements(hotrod, diskSizes) {
         hotrod.ingress.placeOn({diskSize: diskSizes[6]});
         hotrod.redis.placeOn({diskSize: diskSizes[6]});
         hotrod.postgres.placeOn({diskSize: diskSizes[6]});
+	hotrod.seed.placeOn({diskSize: diskSizes[6]});
     } 
 }
 
